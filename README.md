@@ -1,6 +1,6 @@
 # SemanTok: Predictable Semantic Tokens for Efficient Autoregressive Video Generation
 
-**[Project page](https://semantoken.github.io/)** · Paper (coming soon) · Checkpoints (coming soon)
+**[Project page](https://semantoken.github.io/)** · Paper (coming soon) · **[Checkpoints](https://huggingface.co/StabilityLabs/SemanTok)** (Hugging Face)
 
 Mikhail Dereviannykh<sup>1,2</sup>, Vikram Voleti<sup>1</sup>, Simon Donné<sup>1</sup>,
 Mallikarjun Byrasandra Ramalinga Reddy<sup>1</sup>, Shimon Vainer<sup>1</sup>, Mark Boss<sup>1</sup>
@@ -60,14 +60,24 @@ inference package, installed unmodified at a pinned commit.
 
 ## Checkpoints
 
-All checkpoints share one layout, either on the Hugging Face Hub (`hf://<org>/<repo>`, coming soon)
-or in a local directory:
+The checkpoints are on the Hugging Face Hub at
+[StabilityLabs/SemanTok](https://huggingface.co/StabilityLabs/SemanTok), in bf16. Every script takes
+`--ckpt-root` as either `hf://StabilityLabs/SemanTok` (downloads only the models it needs) or a local
+directory with the same layout:
 
 ```
 <ckpt-root>/
   tokenizers/{k600,uco3d}-{videoflextok,semantok}/        config.json, model.safetensors
   ar/{k600,uco3d}-{videoflextok,semantok}-d{10,12,16,20,24,30,36}/
 ```
+
+```bash
+CKPT=hf://StabilityLabs/SemanTok
+# or download everything once (~26 GB):
+huggingface-cli download StabilityLabs/SemanTok --local-dir ckpts && CKPT=ckpts
+```
+
+The d30 and d36 AR models are not on the Hub yet.
 
 | tokenizer | data | training |
 |---|---|---|
