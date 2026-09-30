@@ -2,28 +2,29 @@
 
 **[Project page](https://semantoken.github.io/)** · Paper (coming soon) · Checkpoints (coming soon)
 
-Mikhail Dereviannykh, Vikram Voleti, Simon Donné, Mallikarjun Byrasandra Ramalinga Reddy, Shimon Vainer, Mark Boss
+Mikhail Dereviannykh<sup>1,2</sup>, Vikram Voleti<sup>1</sup>, Simon Donné<sup>1</sup>,
+Mallikarjun Byrasandra Ramalinga Reddy<sup>1</sup>, Shimon Vainer<sup>1</sup>, Mark Boss<sup>1</sup>
+
+<sup>1</sup>[Stability AI](https://stability.ai) &nbsp; <sup>2</sup>[Karlsruher Institut für Technologie](https://www.kit.edu)
 
 > **Status: internal draft.** Not yet reviewed for release. Do not make this repository public
 > until the release review is done.
 
-<p align="center">
-  <img src="assets/GenerationUCO3D_Basketball.gif" width="49%" alt="Text-to-video on uCO3D at token budgets k=4 to 256">
-  <img src="assets/GenerationK600_Yoga.gif" width="49%" alt="Class-to-video on Kinetics-600 at token budgets k=4 to 256">
-</p>
+<p align="center"><img src="assets/teaser.gif" width="100%" alt="Text-to-video on uCO3D and class-to-video on Kinetics-600 at token budgets k=4 to 256, VideoFlexTok vs. SemanTok"></p>
 
-**Left:** with a budget of only *k*=4, the 201M SemanTok AR model keeps the ball's shape and
-appearance through the orbit. At the same AR size, VideoFlexTok's ball is semantically misaligned,
-and even an 11× larger AR model (2.29B) leaves its shape unstable up to *k*=64.
-**Right:** SemanTok keeps a complex body motion stable from *k*=16, and larger *k* refines its
-appearance and motion. VideoFlexTok changes the scene between *k*=4 and *k*=16 (both AR models
-2.29B; visually matched pair from 24 samples per tokenizer).
+<sub>**Left:** at *k*=4, the 201M SemanTok AR model already keeps the ball's shape and appearance
+through the orbit. VideoFlexTok's ball is misaligned at the same size, and still unstable up to
+*k*=64 with an 11× larger AR model. **Right:** SemanTok keeps a complex body motion stable from
+*k*=16; larger *k* refines it. VideoFlexTok changes the scene between *k*=4 and *k*=16. Matched
+pair from 24 samples.</sub>
 
-**TL;DR.** Flexible video tokenizers (e.g., VideoFlexTok) let an autoregressive (AR) model stop
-after any number of tokens, so the first tokens should already capture what the clip shows.
-SemanTok supervises this explicitly: every nested token prefix is trained to carry the clip's
-semantics. The resulting prefixes are cheaper to predict and lead to better generation fidelity: a
-201M SemanTok AR model matches or beats a VideoFlexTok AR model 3.4× its size.
+> [!IMPORTANT]
+> **TL;DR.** Flexible video tokenizers (e.g., VideoFlexTok) let an autoregressive (AR) model stop
+> after any number of tokens, which condition a diffusion decoder, so the first tokens should
+> already capture what the clip shows. **SemanTok supervises this explicitly: every nested token
+> prefix is trained to carry the clip's semantics.** The resulting prefixes are cheaper to predict
+> and lead to better generation fidelity and higher semantic alignment: **a 201M SemanTok AR model
+> matches or beats a VideoFlexTok AR model 3.4× its size.**
 
 This repository has the **inference and evaluation** code: tokenizer reconstruction, class-to-video
 (Kinetics-600) and text-to-video (uCO3D) generation, and the paper's evaluation protocols. It does
