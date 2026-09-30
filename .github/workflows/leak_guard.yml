@@ -1,0 +1,8 @@
+name: leak-guard
+on: [push, pull_request]
+jobs:
+  leak-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: tools/leak_guard.sh

@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "semantok"
+version = "0.1.0"
+description = "SemanTok: inference and evaluation for semantic coarse-to-fine video tokenizers and AR video generation"
+requires-python = ">=3.10"
+readme = {file = "README.md", content-type = "text/markdown"}
+dependencies = [
+    # Tokenizer modules come from the upstream VideoFlexTok inference package, unmodified.
+    "videoflextok @ git+https://github.com/apple-aiml-research/ml-videoflextok@b4e8e5a21e02fb5f37b59191fe01fad6fe2da3dd",
+    "transformers==4.46.3",  # DINOv2-L (SemanTok encoder input) and the umT5 text encoder
+    # video decoding (decord) comes with videoflextok
+    "safetensors>=0.4.0",
+    "huggingface_hub",
+    "numpy>=1.26.4",
+    "tqdm",
+    "timm",  # UMT-L classifier (Kinetics class accuracy)
+    "ftfy",  # umT5 prompt clean-up
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools.packages.find]
+include = ["semantok*"]
+
+[tool.setuptools.package-data]
+semantok = ["data/*.txt", "data/*.json", "data/splits/*.txt"]
