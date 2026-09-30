@@ -27,7 +27,7 @@ def main():
     ap.add_argument("--ks", type=int, nargs="+", default=[1, 4, 8, 16, 32, 64, 128, 256])
     ap.add_argument("--k600-root")
     ap.add_argument("--uco3d-root")
-    ap.add_argument("--uco3d-index")
+    ap.add_argument("--uco3d-index", help="CSV index to use instead of <uco3d-root>/metadata.sqlite")
     ap.add_argument("--skip-pixel", action="store_true", help="skip the PSNR / SSIM pool")
     ap.add_argument("--skip-set", action="store_true", help="skip the FVD / FID / ViCLIP / ClipV pools")
     ap.add_argument("--seed", type=int, default=0)
@@ -65,9 +65,9 @@ def main():
         refs, scores, gens = {}, {}, {}
         for s, n in (("id", 1014), ("ood", 152)):
             refs[s] = runner.reference_features(
-                tok, UCO3DPool(args.uco3d_root, args.uco3d_index, f"uco3d_{s}_1024"), ex,
+                tok, UCO3DPool(args.uco3d_root, f"uco3d_{s}_1024", args.uco3d_index), ex,
                 args.cache_dir, args.workers)
-            val = UCO3DPool(args.uco3d_root, args.uco3d_index, f"uco3d_val_{s}_{n}")
+            val = UCO3DPool(args.uco3d_root, f"uco3d_val_{s}_{n}", args.uco3d_index)
             scores[s], gens[s] = runner.eval_reconstruction(
                 tok, val, ex, args.ks, refs[s], seed=args.seed, pixel_only=args.skip_set,
                 workers=args.workers)

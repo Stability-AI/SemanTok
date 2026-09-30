@@ -6,7 +6,7 @@
 
     # uCO3D, text-to-video (ID and OOD pools, pooled at the official 1014:152 ratio)
     python scripts/eval_generation.py --ckpt-root ... --ar uco3d-semantok-d16 \
-        --uco3d-root /data/uco3d --uco3d-index /data/uco3d/index.csv --ks 16 --out results/
+        --uco3d-root /data/uco3d --ks 16 --out results/
 
 ``--ckpt-root`` is a local directory or ``hf://<org>/<repo>`` laid out as ``tokenizers/<name>/``
 and ``ar/<name>/``. Sample counts, guidance and seeds default to the paper's protocol.
@@ -31,8 +31,8 @@ def main():
     ap.add_argument("--ar", required=True, help="AR checkpoint name, e.g. k600-semantok-d16")
     ap.add_argument("--ks", type=int, nargs="+", default=[1, 4, 8, 16, 32, 64, 128, 256])
     ap.add_argument("--k600-root", help="Kinetics-600 validation videos: <root>/<label>/<file>.mp4")
-    ap.add_argument("--uco3d-root", help="uCO3D root; videos at <root>/<video_path>")
-    ap.add_argument("--uco3d-index", help="uCO3D index CSV (category, sequence_name, video_path, captions)")
+    ap.add_argument("--uco3d-root", help="official uCO3D download (metadata.sqlite + videos)")
+    ap.add_argument("--uco3d-index", help="CSV index to use instead of <uco3d-root>/metadata.sqlite")
     ap.add_argument("--n-samples", type=int, help="override the paper's sample count per k")
     ap.add_argument("--cfg", type=float, help="override the paper's AR guidance")
     ap.add_argument("--seed", type=int, default=0)
@@ -54,7 +54,7 @@ def main():
         text_encoder = None
     else:
         from semantok.text import UMT5TextEncoder
-        pools = {s: UCO3DPool(args.uco3d_root, args.uco3d_index, f"uco3d_{s}_1024") for s in ("id", "ood")}
+        pools = {s: UCO3DPool(args.uco3d_root, f"uco3d_{s}_1024", args.uco3d_index) for s in ("id", "ood")}
         text_encoder = UMT5TextEncoder(device)
     refs = {s: runner.reference_features(tok, p, ex, args.cache_dir, args.workers) for s, p in pools.items()}
 
