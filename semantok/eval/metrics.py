@@ -208,9 +208,19 @@ class UMTKinetics600:
                 raise FileNotFoundError(f"{p} missing; run scripts/download_eval_models.sh")
         # Load the one file by path: the package __init__ imports unrelated models and their deps.
         import importlib.util
-        spec = importlib.util.spec_from_file_location("_umt_modeling_finetune", code)
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
+        import sys
+        name = "_umt_modeling_finetune"
+        mod = sys.modules.get(name)
+        if mod is None:
+            spec = importlib.util.spec_from_file_location(name, code)
+            mod = importlib.util.module_from_spec(spec)
+            # timm's @register_model looks the defining module up in sys.modules.
+            sys.modules[name] = mod
+            try:
+                spec.loader.exec_module(mod)
+            except BaseException:
+                del sys.modules[name]
+                raise
 
         self.model = mod.vit_large_patch16_224(
             pretrained=False, num_classes=600, all_frames=16, tubelet_size=1,
