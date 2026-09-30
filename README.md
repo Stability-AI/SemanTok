@@ -5,7 +5,7 @@
 Mikhail Dereviannykh<sup>1,2</sup>, Vikram Voleti<sup>1</sup>, Simon Donné<sup>1</sup>,
 Mallikarjun Byrasandra Ramalinga Reddy<sup>1</sup>, Shimon Vainer<sup>1</sup>, Mark Boss<sup>1</sup>
 
-<sup>1</sup>[Stability AI](https://stability.ai) &nbsp; <sup>2</sup>[Karlsruher Institut für Technologie](https://www.kit.edu)
+<sup>1</sup>[Stability AI](https://stability.ai) &nbsp; <sup>2</sup>[Karlsruhe Institute of Technology](https://www.kit.edu)
 
 > **Status: internal draft.** Not yet reviewed for release. Do not make this repository public
 > until the release review is done.
@@ -48,12 +48,6 @@ patch, the frame's DINO class token is added to its first register token, and De
 heads reconstruct the DINO features from the kept prefix during training. SemanTok keeps
 VideoFlexTok's FSQ codebook (64k codes), sequence length, nested dropout and decoder, so both
 tokenizers are compared under the same AR models.
-
-<p align="center"><img src="assets/ar_scaling_flops_v2.svg" width="100%" alt="Generation metrics versus AR inference FLOPs for both tokenizers"></p>
-
-Generation vs. AR inference FLOPs per clip. Each faded curve is one AR size sweeping *k* from 1 to
-256; black is the best score each tokenizer reaches at a given compute.
-
 ## Installation
 
 ```bash
