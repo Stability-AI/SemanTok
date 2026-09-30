@@ -21,9 +21,6 @@ Mikhail Dereviannykh<sup>1,2</sup>, Vikram Voleti<sup>1</sup>, Simon Donné<sup>
 Mallikarjun Byrasandra Ramalinga Reddy<sup>1</sup>, Shimon Vainer<sup>1</sup>, Mark Boss<sup>1</sup>
 &nbsp;·&nbsp; <sup>1</sup>[Stability AI](https://stability.ai) &nbsp; <sup>2</sup>[Karlsruhe Institute of Technology](https://www.kit.edu)
 
-> **Status: internal draft.** Not yet reviewed for release. Do not make this repository public
-> until the release review is done.
-
 ## About
 
 > [!IMPORTANT]
