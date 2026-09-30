@@ -11,7 +11,7 @@ readme = {file = "README.md", content-type = "text/markdown"}
 dependencies = [
     # Tokenizer modules come from the upstream VideoFlexTok inference package, unmodified.
     "videoflextok @ git+https://github.com/apple-aiml-research/ml-videoflextok@b4e8e5a21e02fb5f37b59191fe01fad6fe2da3dd",
-    "transformers==4.46.3",  # DINOv2-L (SemanTok encoder input) and the umT5 text encoder
+    "transformers==5.10.1",  # DINOv2-L (SemanTok encoder input) and the umT5 text encoder
     # video decoding (decord) comes with videoflextok
     "safetensors>=0.4.0",
     "huggingface_hub",
