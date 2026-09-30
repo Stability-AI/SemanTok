@@ -8,6 +8,7 @@ version = "0.1.0"
 description = "SemanTok: inference and evaluation for semantic coarse-to-fine video tokenizers and AR video generation"
 requires-python = ">=3.10"
 readme = {file = "README.md", content-type = "text/markdown"}
+license = {file = "LICENSE.md"}
 dependencies = [
     # Tokenizer modules come from the upstream VideoFlexTok inference package, unmodified.
     "videoflextok @ git+https://github.com/apple-aiml-research/ml-videoflextok@b4e8e5a21e02fb5f37b59191fe01fad6fe2da3dd",

@@ -1,22 +1,30 @@
-# SemanTok: Predictable Semantic Tokens for Efficient Autoregressive Video Generation
+# SemanTok
 
-**[Project page](https://semantoken.github.io/)** · Paper (coming soon) · **[Checkpoints](https://huggingface.co/StabilityLabs/SemanTok)** (Hugging Face)
-
-Mikhail Dereviannykh<sup>1,2</sup>, Vikram Voleti<sup>1</sup>, Simon Donné<sup>1</sup>,
-Mallikarjun Byrasandra Ramalinga Reddy<sup>1</sup>, Shimon Vainer<sup>1</sup>, Mark Boss<sup>1</sup>
-
-<sup>1</sup>[Stability AI](https://stability.ai) &nbsp; <sup>2</sup>[Karlsruhe Institute of Technology](https://www.kit.edu)
-
-> **Status: internal draft.** Not yet reviewed for release. Do not make this repository public
-> until the release review is done.
+**Predictable Semantic Tokens for Efficient Autoregressive Video Generation**
 
 <p align="center"><img src="assets/teaser.gif" width="100%" alt="Text-to-video on uCO3D and class-to-video on Kinetics-600 at token budgets k=4 to 256, VideoFlexTok vs. SemanTok"></p>
+
+<p align="center">
+🌐 <a href="https://semantoken.github.io/">Project Page</a> |
+📄 Paper (coming soon) |
+🤗 <a href="https://huggingface.co/StabilityLabs/SemanTok">Hugging Face Model</a> |
+✍️ <a href="#citation">Citation</a>
+</p>
 
 <sub>**Left:** at *k*=4, the 201M SemanTok AR model already keeps the ball's shape and appearance
 through the orbit. VideoFlexTok's ball is misaligned at the same size, and still unstable up to
 *k*=64 with an 11× larger AR model. **Right:** SemanTok keeps a complex body motion stable from
 *k*=16; larger *k* refines it. VideoFlexTok changes the scene between *k*=4 and *k*=16. Matched
 pair from 24 samples.</sub>
+
+Mikhail Dereviannykh<sup>1,2</sup>, Vikram Voleti<sup>1</sup>, Simon Donné<sup>1</sup>,
+Mallikarjun Byrasandra Ramalinga Reddy<sup>1</sup>, Shimon Vainer<sup>1</sup>, Mark Boss<sup>1</sup>
+&nbsp;·&nbsp; <sup>1</sup>[Stability AI](https://stability.ai) &nbsp; <sup>2</sup>[Karlsruhe Institute of Technology](https://www.kit.edu)
+
+> **Status: internal draft.** Not yet reviewed for release. Do not make this repository public
+> until the release review is done.
+
+## About
 
 > [!IMPORTANT]
 > **TL;DR.** Flexible video tokenizers (e.g., VideoFlexTok) let an autoregressive (AR) model stop
@@ -26,11 +34,11 @@ pair from 24 samples.</sub>
 > and lead to better generation fidelity and higher semantic alignment: **a 201M SemanTok AR model
 > matches or beats a VideoFlexTok AR model 3.4× its size.**
 
-This repository has the **inference and evaluation** code: tokenizer reconstruction, class-to-video
-(Kinetics-600) and text-to-video (uCO3D) generation, and the paper's evaluation protocols. It does
-not include training code.
+SemanTok is an inference and evaluation release: tokenizer reconstruction, class-to-video
+(Kinetics-600) and text-to-video (uCO3D) generation, and the paper's evaluation protocols, for both
+SemanTok and the VideoFlexTok baseline. Training code is not included.
 
-## How it works
+### How it works
 
 <p align="center"><img src="assets/overview.svg" width="100%" alt="Overview: tokenizer training with semantic supervision, then AR generation of token prefixes rendered by the diffusion decoder"></p>
 
@@ -48,36 +56,47 @@ patch, the frame's DINO class token is added to its first register token, and De
 heads reconstruct the DINO features from the kept prefix during training. SemanTok keeps
 VideoFlexTok's FSQ codebook (64k codes), sequence length, nested dropout and decoder, so both
 tokenizers are compared under the same AR models.
+
 ## Installation
 
+The commands below install SemanTok, point it at the Hugging Face checkpoints, and generate a first
+video. A CUDA GPU and Python >= 3.10 are required.
+
+### Packages
+
 ```bash
-git clone https://github.com/Stability-AI/SemanTokPublic && cd SemanTokPublic
-pip install -e .          # Python >= 3.10, CUDA GPU
+git clone https://github.com/Stability-AI/SemanTok.git
+cd SemanTok
+pip install -e .
 ```
 
 The tokenizer modules come from the upstream [VideoFlexTok](https://github.com/apple/ml-videoflextok)
 inference package, installed unmodified at a pinned commit.
 
-## Checkpoints
+### Model
 
-The checkpoints are on the Hugging Face Hub at
-[StabilityLabs/SemanTok](https://huggingface.co/StabilityLabs/SemanTok), in bf16. Every script takes
-`--ckpt-root` as either `hf://StabilityLabs/SemanTok` (downloads only the models it needs) or a local
-directory with the same layout:
+Model files are hosted at [StabilityLabs/SemanTok](https://huggingface.co/StabilityLabs/SemanTok)
+(bf16). Authenticate if the repository is private or gated for your account:
 
+```bash
+hf auth login
+hf auth whoami
 ```
-<ckpt-root>/
-  tokenizers/{k600,uco3d}-{videoflextok,semantok}/        config.json, model.safetensors
-  ar/{k600,uco3d}-{videoflextok,semantok}-d{10,12,16,20,24,30,36}/
-```
+
+Every script takes `--ckpt-root` as either `hf://StabilityLabs/SemanTok`, which downloads only the
+models it needs, or a local directory with the same layout:
 
 ```bash
 CKPT=hf://StabilityLabs/SemanTok
 # or download everything once (~26 GB):
-huggingface-cli download StabilityLabs/SemanTok --local-dir ckpts && CKPT=ckpts
+hf download StabilityLabs/SemanTok --local-dir ckpts && CKPT=ckpts
 ```
 
-The d30 and d36 AR models are not on the Hub yet.
+```
+<ckpt-root>/
+  tokenizers/{k600,uco3d}-{videoflextok,semantok}/        config.json, model.safetensors
+  ar/{k600,uco3d}-{videoflextok,semantok}-d{10,12,16,20,24}/
+```
 
 | tokenizer | data | training |
 |---|---|---|
@@ -88,7 +107,9 @@ AR depth `d` sets the size: d10 49M, d12 85M, d16 201M, d20 393M, d24 679M, d30 
 Kinetics-600 models are class-conditioned (597 classes); uCO3D models are conditioned on umT5 caption
 embeddings (loaded from the `Wan-AI/Wan2.1-T2V-1.3B-Diffusers` text encoder, no video model involved).
 
-## Usage
+The paper's d30 (1.33B) and d36 (2.29B) AR models are not on the Hub yet.
+
+### Quick Start
 
 ```bash
 # Reconstruct a clip from its first k tokens per frame
@@ -102,7 +123,7 @@ python scripts/generate.py --ckpt-root $CKPT --ar uco3d-semantok-d16 \
     --prompt "A small orange basketball on a plaid tablecloth" --ks 4 16 64
 ```
 
-From Python:
+Use the Python API to integrate SemanTok into your own code:
 
 ```python
 from semantok import Tokenizer, load_ar
@@ -114,13 +135,15 @@ tokens = tok.encode(clip)                            # [1, 5, 256] FSQ ids, coar
 video = tok.decode(tokens, k=16)                     # decode from the first 16 tokens per frame
 ```
 
-## Evaluation
+## Results
+
+### Evaluation
 
 The scripts reproduce the paper's protocols: the same clip pools (shipped in
 `semantok/data/splits`), sample counts, seeds, batching, guidance and metric preprocessing.
 
 ```bash
-scripts/download_eval_models.sh      # I3D (FVD), ViCLIP, UMT-L; ViCLIP and UMT are gated on HF, run `huggingface-cli login` first
+scripts/download_eval_models.sh      # I3D (FVD), ViCLIP, UMT-L; ViCLIP and UMT are gated on HF, run `hf auth login` first
 
 # AR generation (Fig. 4): gFVD, gFID, ViCLIP, ClipV (+ class accuracy on Kinetics-600)
 python scripts/eval_generation.py --ckpt-root $CKPT --ar k600-semantok-d16 --k600-root $K600/val --out results/
@@ -172,7 +195,13 @@ semantok/
 scripts/         reconstruct, generate, eval_generation, eval_reconstruction, download_eval_models
 ```
 
-## Acknowledgements
+## License and Attribution
+
+The code and model weights are released under the
+[Stability AI Community License](LICENSE.md): free for research, non-commercial, and commercial use by
+organizations and individuals with annual revenue up to US $1,000,000. Above that, commercial use needs
+an [Enterprise License](https://stability.ai/enterprise) from Stability AI. See the
+[Hugging Face model card](https://huggingface.co/StabilityLabs/SemanTok) for details.
 
 Built on [VideoFlexTok](https://github.com/apple/ml-videoflextok) (tokenizer architecture and
 inference modules), [VidTok](https://github.com/microsoft/VidTok),
